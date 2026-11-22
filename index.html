@@ -9,6 +9,10 @@
 :root{color-scheme:dark;--bg:#090b12;--panel:#141824;--line:#262d3d;--muted:#9aa4b7;--text:#f5f7fb;--purple:#a78bfa;--cyan:#67e8f9}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#29234a 0,transparent 48%),var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .wrap{max-width:960px;margin:auto;padding:22px 18px 110px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}.brand{display:flex;gap:11px;align-items:center;font-weight:800}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(140deg,#b7a1ff,#6e5de7 55%,#37c8bd);display:grid;place-items:center;font-size:22px}.pill{border:1px solid var(--line);border-radius:30px;padding:7px 11px;color:var(--muted);font-size:11px}.eyebrow{color:#b9a7ff;font-size:11px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(34px,8vw,54px);line-height:1.02;letter-spacing:-2px;margin:9px 0 12px}.hero p{color:var(--muted);max-width:560px;margin:0 0 28px}.section{display:flex;justify-content:space-between;align-items:end;margin:30px 0 13px}.section h2{font-size:18px;margin:0}.section span{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile{background:linear-gradient(145deg,#171d2b,#111621);border:1px solid var(--line);border-radius:19px;padding:17px;min-height:138px;color:inherit;text-decoration:none;display:flex;flex-direction:column;justify-content:space-between;transition:.2s}.tile:active{transform:scale(.98)}.tile .ico{width:42px;height:42px;border-radius:14px;background:#27213e;display:grid;place-items:center;font-size:21px}.tile h3{margin:13px 0 2px;font-size:15px}.tile p{margin:0;color:var(--muted);font-size:12px}.wide{grid-column:1/-1;min-height:110px;display:flex;flex-direction:row;align-items:center;gap:15px}.wide .ico{flex:none}.wide .details{flex:1}.tag{font-size:10px;color:#c4b5fd;border:1px solid #514477;border-radius:20px;padding:5px 8px}.notice{margin-top:24px;padding:15px;border:1px solid var(--line);border-radius:16px;color:var(--muted);font-size:12px}.bottom{position:fixed;bottom:0;left:0;right:0;background:#0b0e17ed;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:clamp(22px,8vw,70px);padding:12px 12px calc(12px + env(safe-area-inset-bottom));z-index:2}.bottom a{color:var(--muted);text-decoration:none;font-size:11px;text-align:center}.bottom b{display:block;font-size:18px;margin-bottom:2px;color:var(--text)}@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wide{grid-column:auto;display:flex;flex-direction:column;align-items:stretch}.wide .ico{flex:none}.wide .details{flex:none}}
+
+.modal-backdrop{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);max-height:88vh;overflow:auto;background:#141824;border:1px solid #343b50;border-radius:22px;padding:20px;box-shadow:0 24px 70px #0009}
+.modal h2{margin:0 0 6px}.modal p{color:var(--muted);font-size:13px}.modal textarea,.modal select{width:100%;background:#090b12;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;margin:7px 0 13px}.modal textarea{min-height:125px;resize:vertical}.modal-actions{display:flex;gap:10px}.action{border:0;border-radius:12px;padding:12px 16px;font-weight:800;background:#a78bfa;color:#11121a}.action.alt{background:#252b3a;color:#fff}.status{font-size:12px;min-height:20px;margin:12px 0;color:#c4b5fd}.modal video{width:100%;border-radius:14px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -29,5 +33,67 @@
 </section>
 <div class="notice">This is the initial studio foundation. Tools marked in development are not yet connected to generation services. Your media should not be uploaded until secure storage and deletion controls are ready.</div>
 </main>
+<div class="modal-backdrop" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+ <div class="modal">
+  <h2 id="videoTitle">🎬 AI Video Test</h2>
+  <p>Our first model test: generate a 5-second cinematic video. Runway API generation uses paid credits.</p>
+  <label for="videoPrompt">Video description</label>
+  <textarea id="videoPrompt">A cinematic, ultra-realistic open-world crime city at night, inspired by modern action video games. A black luxury sports car speeds through neon-lit streets in a futuristic American city. Police vehicles chase behind with flashing red and blue lights. The camera follows the car from a dramatic low-angle tracking shot. Rain reflects the colourful city lights on the road. Realistic human pedestrians, detailed buildings, dramatic atmosphere, smooth camera movement, high-end video game graphics, 4K cinematic quality.</textarea>
+  <label for="videoRatio">Orientation</label>
+  <select id="videoRatio"><option value="1280:720">Landscape (16:9)</option><option value="720:1280">Portrait (9:16)</option></select>
+  <div class="modal-actions"><button class="action" id="runVideo">Generate 5-second test</button><button class="action alt" id="closeVideo">Close</button></div>
+  <div class="status" id="videoStatus" role="status"></div>
+  <div id="videoResult"></div>
+ </div>
+</div>
+
 <nav class="bottom"><a href="index.html"><b>⌂</b>Home</a><a href="#projects"><b>▤</b>Projects</a><a href="#templates"><b>▦</b>Templates</a><a href="#profile"><b>◉</b>Profile</a></nav>
+
+<script>
+(function(){
+ const modal=document.getElementById('videoModal');
+ const status=document.getElementById('videoStatus');
+ const result=document.getElementById('videoResult');
+ const prompt=document.getElementById('videoPrompt');
+ const open=()=>{modal.classList.add('open');status.textContent='';result.innerHTML='';};
+ const close=()=>modal.classList.remove('open');
+ document.querySelectorAll('a[href^="#"]').forEach(link=>{
+  link.addEventListener('click',event=>{
+   event.preventDefault();
+   const target=link.getAttribute('href');
+   if(target==='#video'){open();return;}
+   const label=link.innerText.replace(/\s+/g,' ').trim();
+   statusToast(label+' is not connected yet. We will add it after the video model test.');
+  });
+ });
+ document.getElementById('closeVideo').addEventListener('click',close);
+ modal.addEventListener('click',e=>{if(e.target===modal)close();});
+ function statusToast(message){
+  let toast=document.getElementById('vfToast');
+  if(!toast){toast=document.createElement('div');toast.id='vfToast';toast.style.cssText='position:fixed;z-index:30;bottom:85px;left:50%;transform:translateX(-50%);background:#252b3a;color:white;padding:12px 16px;border-radius:12px;font-size:12px;max-width:90%;text-align:center';document.body.appendChild(toast);}
+  toast.textContent=message;toast.style.display='block';clearTimeout(window.vfToastTimer);window.vfToastTimer=setTimeout(()=>toast.style.display='none',2600);
+ }
+ document.getElementById('runVideo').addEventListener('click',async()=>{
+  const text=prompt.value.trim();
+  if(!text){status.textContent='Please enter a video description.';return;}
+  if(!confirm('This test sends a request to Runway and uses paid API credits. Continue?'))return;
+  const btn=document.getElementById('runVideo');btn.disabled=true;status.textContent='Sending your request to the video model…';
+  try{
+   const start=await fetch('/api/video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:text,ratio:document.getElementById('videoRatio').value,duration:5})});
+   const task=await start.json();if(!start.ok)throw new Error(task.error||'Could not start the video.');
+   status.textContent='Video task started. Waiting for the model…';
+   for(let i=0;i<60;i++){
+    await new Promise(resolve=>setTimeout(resolve,5000));
+    const check=await fetch('/api/video?taskId='+encodeURIComponent(task.taskId));
+    const data=await check.json();if(!check.ok)throw new Error(data.error||'Could not check video progress.');
+    if(data.status==='SUCCEEDED'&&data.videoUrl){status.textContent='Your video is ready.';result.innerHTML='<video controls playsinline src="'+data.videoUrl+'"></video><p><a style="color:#67e8f9" href="'+data.videoUrl+'" target="_blank" rel="noopener">Open or download video</a></p>';return;}
+    if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.failure||'The video model could not complete this request.');
+    status.textContent='Model status: '+data.status+'. Checking again…';
+   }
+   status.textContent='The task is still processing. Please wait before submitting another paid request.';
+  }catch(error){status.textContent=error.message||'Something went wrong.';}
+  finally{btn.disabled=false;}
+ });
+})();
+</script>
 </body></html>
