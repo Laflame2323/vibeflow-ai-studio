@@ -19,10 +19,22 @@ export default async function handler(req, res) {
   }
   try {
     const upstream = await fetch("https://api.jamendo.com/v3.0/" + endpoint + "/?" + params.toString(), { headers: { Accept: "application/json" } });
-    const data = await upstream.json().catch(() => ({}));
+    let data = await upstream.json().catch(() => ({}));
     if (!upstream.ok || data.headers?.status !== "success") {
       console.error("Jamendo API error:", upstream.status, JSON.stringify(data).slice(0, 500));
       return res.status(502).json({ error: "The music catalogue is temporarily unavailable. Please try again." });
+    }
+    // The chart endpoint returns track IDs, so fetch full track metadata and playable URLs separately.
+    if (mode === "trending") {
+      const ids = (data.results || []).map(t => t.id).filter(Boolean);
+      if (!ids.length) return res.status(200).json({ tracks: [], mode, total: 0 });
+      const detailsParams = new URLSearchParams({ client_id: clientId, format: "json", limit: String(ids.length), id: ids.join(","), include: "licenses,musicinfo" });
+      const detailsResponse = await fetch("https://api.jamendo.com/v3.0/tracks/?" + detailsParams.toString(), { headers: { Accept: "application/json" } });
+      data = await detailsResponse.json().catch(() => ({}));
+      if (!detailsResponse.ok || data.headers?.status !== "success") {
+        console.error("Jamendo chart track details failed:", detailsResponse.status, JSON.stringify(data).slice(0, 500));
+        return res.status(502).json({ error: "Trending tracks could not be loaded. Please try again." });
+      }
     }
     const tracks = (data.results || []).map(t => ({
       id: String(t.id),
