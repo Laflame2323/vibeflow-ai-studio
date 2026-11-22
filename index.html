@@ -43,7 +43,18 @@
 <section class="screen" id="create">
 <div class="feature-head"><button class="back" onclick="showScreen('home')">‹</button><div><h1>Let's make magic</h1><p>Start with an idea. We'll shape it together.</p></div></div>
 <div class="previewbox"><div><span>🎥</span><strong>Your next video starts here</strong><div style="font-size:11px">A little idea can go a long way.</div></div></div>
-<div class="formcard"><label for="idea">What's your video about?</label><textarea class="field textarea" id="idea" placeholder="E.g. A cinematic GTA-inspired city at night, with a dramatic opening..."></textarea><label>Choose a format</label><div class="chips" id="formats"><button class="chip selected">Short video</button><button class="chip">YouTube video</button><button class="chip">Story / Reel</button></div><label>Pick a vibe</label><div class="chips" id="vibes"><button class="chip selected">Cinematic</button><button class="chip">Fun</button><button class="chip">Inspirational</button><button class="chip">Realistic</button></div><label for="duration">Video length</label><select class="field" id="duration"><option>30 seconds</option><option>60 seconds</option><option>2 minutes</option><option>5 minutes</option></select><button class="btn full" id="generateBtn">Generate AI script ✨</button><p class="hint">VibeFlow will turn your idea into a script and scene plan. This creates a script, not a finished video.</p><section id="scriptResult" class="formcard" style="display:none;margin-top:15px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px"><strong>Your AI script</strong><span class="pill">GENERATED</span></div><pre id="scriptOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13px;color:var(--ink);margin:0"></pre><div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px"><button class="btn secondary" id="copyScript" type="button">Copy script</button><button class="btn" id="sendToVoice" type="button">Use in Voice Studio ↗</button></div><p class="hint">Voice Studio currently accepts up to 200 characters per generation.</p></section></div>
+<div class="formcard"><label for="idea">What's your video about?</label><textarea class="field textarea" id="idea" placeholder="E.g. A cinematic GTA-inspired city at night, with a dramatic opening..."></textarea><label>Choose a format</label><div class="chips" id="formats"><button class="chip selected">Short video</button><button class="chip">YouTube video</button><button class="chip">Story / Reel</button></div><label>Pick a vibe</label><div class="chips" id="vibes"><button class="chip selected">Cinematic</button><button class="chip">Fun</button><button class="chip">Inspirational</button><button class="chip">Realistic</button></div><label for="duration">Video length</label><select class="field" id="duration"><option>30 seconds</option><option>60 seconds</option><option>2 minutes</option><option>5 minutes</option></select><button class="btn full" id="generateBtn">Generate AI script ✨</button><p class="hint">VibeFlow will turn your idea into a script and scene plan. This creates a script, not a finished video.</p><section id="scriptResult" class="formcard" style="display:none;margin-top:15px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px"><strong>Your AI script</strong><span class="pill">GENERATED</span></div><pre id="scriptOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13px;color:var(--ink);margin:0"></pre><div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px"><button class="btn secondary" id="copyScript" type="button">Copy script</button><button class="btn" id="sendToVoice" type="button">Use in Voice Studio ↗</button></div><p class="hint">Voice Studio currently accepts up to 200 characters per generation.</p></section>
+<div style="height:1px;background:var(--line);margin:20px 0"></div>
+<label for="videoRatio">Video orientation</label>
+<select class="field" id="videoRatio"><option value="1280:720">Landscape · YouTube</option><option value="720:1280">Portrait · Shorts / Reels / TikTok</option></select>
+<button class="btn full" id="generateVideoBtn" type="button">Generate 5-second AI video 🎬</button>
+<p class="hint">This uses paid Runway credits. You will be asked to confirm before any video is generated. The first test is limited to 5 seconds.</p>
+<section id="videoResult" class="formcard" style="display:none;margin-top:15px">
+<strong id="videoStatus">Preparing your video…</strong>
+<p class="hint" id="videoStatusDetail">Keep this page open while Runway works.</p>
+<video id="generatedVideo" controls playsinline style="display:none;width:100%;border-radius:16px;margin-top:12px;background:#111"></video>
+<a id="downloadVideo" class="btn full" style="display:none;text-align:center;text-decoration:none;margin-top:12px" download="vibeflow-video.mp4">Download video</a>
+</section></div>
 </section>
 
 <section class="screen" id="projects"><div class="feature-head"><div><h1>My projects</h1><p>Your creative journey, all in one place.</p></div></div><div class="previewbox"><div><span>🗂️</span><strong>Your project space is ready</strong><div style="font-size:11px">Start creating and your projects will live here.</div></div></div><button class="btn full" onclick="showScreen('create')">＋ Start a project</button></section>
@@ -77,6 +88,50 @@ generateBtn.onclick=async()=>{
 };
 document.getElementById('copyScript').onclick=async()=>{if(!latestScript)return;try{await navigator.clipboard.writeText(latestScript);toast('Script copied ✨')}catch{toast('Copy is not available in this browser')}};
 document.getElementById('sendToVoice').onclick=()=>{if(!latestScript)return;localStorage.setItem('vf-voice-draft',latestScript.slice(0,200));location.href='voice.html'};
+const generateVideoBtn=document.getElementById('generateVideoBtn');
+generateVideoBtn.onclick=async()=>{
+  const idea=document.getElementById('idea').value.trim();
+  if(!idea){toast('Add your video idea first ✨');return}
+  const vibe=document.querySelector('#vibes .chip.selected')?.textContent.trim()||'Cinematic';
+  const ratio=document.getElementById('videoRatio').value;
+  const approved=window.confirm('This will use paid Runway credits to generate one 5-second AI video. Continue?');
+  if(!approved)return;
+  const result=document.getElementById('videoResult');
+  const status=document.getElementById('videoStatus');
+  const detail=document.getElementById('videoStatusDetail');
+  const player=document.getElementById('generatedVideo');
+  const download=document.getElementById('downloadVideo');
+  result.style.display='block';player.style.display='none';download.style.display='none';
+  status.textContent='Sending your idea to Runway…';detail.textContent='Your video task is being created.';
+  generateVideoBtn.disabled=true;generateVideoBtn.textContent='Creating video…';
+  try{
+    const start=await fetch('/api/video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:vibe+' style. '+idea,ratio,duration:5})});
+    const task=await start.json();
+    if(!start.ok)throw new Error(task.error||'Could not start video generation.');
+    if(!task.taskId)throw new Error('Runway did not return a video task ID.');
+    status.textContent='Your video is rendering ✨';
+    detail.textContent='This can take a few minutes. Please keep this page open.';
+    let finished=false;
+    for(let attempt=0;attempt<60;attempt++){
+      await new Promise(resolve=>setTimeout(resolve,5000));
+      const check=await fetch('/api/video?taskId='+encodeURIComponent(task.taskId));
+      const state=await check.json();
+      if(!check.ok)throw new Error(state.error||'Could not check video progress.');
+      if(state.status==='SUCCEEDED'&&state.videoUrl){
+        player.src=state.videoUrl;player.style.display='block';download.href=state.videoUrl;download.style.display='block';
+        status.textContent='Your AI video is ready!';detail.textContent='Preview it here or download your 5-second clip.';
+        finished=true;break;
+      }
+      if(state.status==='FAILED'||state.status==='CANCELED'){
+        throw new Error('Runway could not complete this video. Please try another prompt.');
+      }
+      detail.textContent='Rendering… status: '+state.status;
+    }
+    if(!finished){status.textContent='Video is taking longer than expected';detail.textContent='Your task may still be processing. Try again later rather than submitting another paid request.'}
+  }catch(error){status.textContent='Video generation stopped';detail.textContent=error.message||'Please try again.';toast(error.message||'Video generation failed.')}
+  finally{generateVideoBtn.disabled=false;generateVideoBtn.textContent='Generate 5-second AI video 🎬'}
+  result.scrollIntoView({behavior:'smooth',block:'start'});
+};
 function setTheme(dark){document.documentElement.dataset.theme=dark?'dark':'light';document.getElementById('themeBtn').textContent=dark?'☀':'☾';document.getElementById('themeText').textContent=dark?'Dark':'Light';localStorage.setItem('vf-theme',dark?'dark':'light')}
 const dark=localStorage.getItem('vf-theme')==='dark';setTheme(dark);document.getElementById('themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');document.getElementById('themeText').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
 </script></body></html>
