@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090b12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VibeFlow">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
 <title>VibeFlow AI Studio</title>
 <style>
 :root{color-scheme:dark;--bg:#090b12;--panel:#141824;--line:#262d3d;--muted:#9aa4b7;--text:#f5f7fb;--purple:#a78bfa;--cyan:#67e8f9}
@@ -208,4 +214,9 @@
 })();
 </script>
 
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch((error) => console.warn('VibeFlow offline support unavailable:', error)));
+}
+</script>
 </body></html>
