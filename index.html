@@ -13,6 +13,31 @@
 .modal-backdrop{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
 .modal-backdrop.open{display:flex}.modal{width:min(560px,100%);max-height:88vh;overflow:auto;background:#141824;border:1px solid #343b50;border-radius:22px;padding:20px;box-shadow:0 24px 70px #0009}
 .modal h2{margin:0 0 6px}.modal p{color:var(--muted);font-size:13px}.modal textarea,.modal select{width:100%;background:#090b12;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;margin:7px 0 13px}.modal textarea{min-height:125px;resize:vertical}.modal-actions{display:flex;gap:10px}.action{border:0;border-radius:12px;padding:12px 16px;font-weight:800;background:#a78bfa;color:#11121a}.action.alt{background:#252b3a;color:#fff}.status{font-size:12px;min-height:20px;margin:12px 0;color:#c4b5fd}.modal video{width:100%;border-radius:14px;margin-top:10px}
+
+/* Flames voice assistant */
+.flames-launch{position:fixed;right:18px;bottom:88px;z-index:10;border:1px solid #7564c9;border-radius:22px;padding:10px 15px;background:linear-gradient(135deg,#a78bfa,#6554d8);color:#090b12;font-weight:900;box-shadow:0 10px 35px #0008;display:flex;align-items:center;gap:9px}
+.flames-launch .flames-orb{width:28px;height:28px;border-radius:50%;background:#171326;color:#d8ceff;display:grid;place-items:center}
+.flames-panel{position:fixed;z-index:40;right:12px;bottom:145px;width:min(390px,calc(100vw - 24px));height:min(590px,calc(100dvh - 180px));background:#111623;border:1px solid #4a416e;border-radius:24px;box-shadow:0 25px 80px #000b;display:none;flex-direction:column;overflow:hidden}
+.flames-panel.open{display:flex}
+.flames-head{padding:15px 16px;background:linear-gradient(120deg,#292044,#151b2a);display:flex;align-items:center;gap:11px;border-bottom:1px solid #343047}
+.flames-avatar{width:42px;height:42px;border-radius:15px;background:linear-gradient(140deg,#c4b5fd,#4dd7d0);display:grid;place-items:center;color:#111;font-size:20px;font-weight:900}
+.flames-head strong{display:block}.flames-head small{color:#aeb6c9;font-size:11px}
+.flames-close{margin-left:auto;border:0;background:#ffffff12;color:white;border-radius:10px;padding:8px 11px;font-size:18px}
+.flames-messages{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+.flames-msg{max-width:88%;padding:11px 13px;border-radius:15px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.flames-msg.bot{background:#20283a;border:1px solid #303a50;align-self:flex-start}
+.flames-msg.user{background:#51428e;color:white;align-self:flex-end}
+.flames-compose{padding:12px;border-top:1px solid #30384b;background:#141a28}
+.flames-inputrow{display:flex;gap:7px;align-items:center}
+.flames-inputrow input{min-width:0;flex:1;background:#090d16;border:1px solid #343c50;border-radius:13px;padding:12px;color:white;font:inherit;font-size:13px}
+.flames-iconbtn{border:0;border-radius:12px;padding:12px;background:#292f42;color:white;font-size:17px}
+.flames-send{background:#a78bfa;color:#111;font-weight:900}
+.flames-hint{font-size:10px;color:#8f9ab0;margin-top:7px}
+.flames-status{font-size:11px;color:#c4b5fd;min-height:16px;margin:0 0 7px}
+.flames-iconbtn.listening{background:#9f344d;animation:flamesPulse 1.2s infinite}
+@keyframes flamesPulse{50%{box-shadow:0 0 0 6px #9f344d33}}
+@media(min-width:650px){.flames-panel{right:22px;bottom:150px}}
+
 </style>
 </head>
 <body>
@@ -46,6 +71,14 @@
   <div id="videoResult"></div>
  </div>
 </div>
+
+
+<button class="flames-launch" id="flamesLaunch" type="button" aria-label="Talk to Flames"><span class="flames-orb">✦</span> Ask Flames</button>
+<section class="flames-panel" id="flamesPanel" aria-label="Flames AI assistant">
+ <header class="flames-head"><div class="flames-avatar">F</div><div><strong>Flames</strong><small>La Flame · VibeFlow AI assistant</small></div><button class="flames-close" id="flamesClose" type="button" aria-label="Close">×</button></header>
+ <div class="flames-messages" id="flamesMessages" aria-live="polite"><div class="flames-msg bot">Yo! I'm Flames. Talk to me or type a message. What are we creating today?</div></div>
+ <div class="flames-compose"><div class="flames-status" id="flamesStatus">Ready when you are.</div><div class="flames-inputrow"><button class="flames-iconbtn" id="flamesMic" type="button" aria-label="Start voice input">🎙️</button><input id="flamesInput" type="text" maxlength="1200" placeholder="Message Flames…" autocomplete="off"><button class="flames-iconbtn flames-send" id="flamesSend" type="button" aria-label="Send">➤</button></div><div class="flames-hint">Tap the microphone to speak. Flames will answer aloud when voice mode is available.</div></div>
+</section>
 
 <nav class="bottom"><a href="index.html"><b>⌂</b>Home</a><a href="#projects"><b>▤</b>Projects</a><a href="#templates"><b>▦</b>Templates</a><a href="#profile"><b>◉</b>Profile</a></nav>
 
@@ -96,4 +129,48 @@
  });
 })();
 </script>
+
+<script>
+(function(){
+ const panel=document.getElementById("flamesPanel");
+ if(!panel)return;
+ const launch=document.getElementById("flamesLaunch"),close=document.getElementById("flamesClose");
+ const messages=document.getElementById("flamesMessages"),input=document.getElementById("flamesInput");
+ const send=document.getElementById("flamesSend"),mic=document.getElementById("flamesMic"),status=document.getElementById("flamesStatus");
+ let history=[],recognition=null,listening=false;
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ function addMessage(text,who){const el=document.createElement("div");el.className="flames-msg "+who;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el;}
+ function speak(text){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.rate=1.02;utterance.pitch=0.96;utterance.lang="en-US";window.speechSynthesis.speak(utterance);}
+ function setStatus(text){status.textContent=text;}
+ launch.addEventListener("click",()=>{panel.classList.add("open");input.focus();});
+ close.addEventListener("click",()=>{panel.classList.remove("open");if(listening&&recognition)recognition.stop();});
+ async function sendMessage(text,voiceInput){
+  const clean=text.trim();if(!clean)return;
+  addMessage(clean,"user");input.value="";send.disabled=true;mic.disabled=true;setStatus("Flames is thinking…");
+  history.push({role:"user",content:clean});
+  try{
+   const response=await fetch("/api/flames",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:history.slice(-12)})});
+   const data=await response.json();if(!response.ok)throw new Error(data.error||"Flames couldn't respond. Try again.");
+   const answer=String(data.reply||"I couldn't form a reply. Try asking again.");
+   history.push({role:"assistant",content:answer});addMessage(answer,"bot");setStatus("Ready when you are.");
+   if(voiceInput||window.__flamesVoiceReplies)speak(answer);
+  }catch(error){history.pop();addMessage(error.message||"Connection error. Please try again.","bot");setStatus("Could not connect.");}
+  finally{send.disabled=false;mic.disabled=false;input.focus();}
+ }
+ send.addEventListener("click",()=>sendMessage(input.value,false));
+ input.addEventListener("keydown",e=>{if(e.key==="Enter")sendMessage(input.value,false);});
+ if(SpeechRecognition){
+  recognition=new SpeechRecognition();recognition.lang="en-US";recognition.continuous=false;recognition.interimResults=false;
+  recognition.onstart=()=>{listening=true;mic.classList.add("listening");setStatus("Listening… speak now.");};
+  recognition.onresult=e=>{const spoken=e.results[0][0].transcript;input.value=spoken;sendMessage(spoken,true);};
+  recognition.onerror=e=>{setStatus(e.error==="not-allowed"?"Microphone permission was denied. Allow microphone access in your browser.":"Voice input stopped. You can type instead.");};
+  recognition.onend=()=>{listening=false;mic.classList.remove("listening");if(status.textContent==="Listening… speak now.")setStatus("Ready when you are.");};
+  mic.addEventListener("click",()=>{if(listening){recognition.stop();return;}try{recognition.start();}catch(e){setStatus("Please wait a moment, then tap the microphone again.");}});
+ }else{
+  mic.addEventListener("click",()=>setStatus("Voice recognition isn't supported in this browser yet. Type your message instead."));
+  mic.title="Voice recognition not supported in this browser";
+ }
+})();
+</script>
+
 </body></html>
