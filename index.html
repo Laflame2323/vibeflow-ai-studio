@@ -1,137 +1,33 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f7ff"><title>VibeFlow AI Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b12">
+<title>VibeFlow AI Studio</title>
 <style>
-:root{--bg:#f7f7ff;--surface:#fff;--surface2:#f0efff;--ink:#211b3b;--muted:#77738d;--line:#e9e6f4;--purple:#7655f6;--purple2:#a18bff;--mint:#55d8c1;--coral:#ff8e9e;--yellow:#ffd36d;--shadow:0 14px 38px #40317a12}
-[data-theme=dark]{--bg:#141326;--surface:#211f38;--surface2:#302b4d;--ink:#fbfaff;--muted:#b7b1cc;--line:#3b3656;--shadow:0 14px 38px #0003}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'Nunito',sans-serif;transition:background .25s,color .25s}button,input,textarea,select{font:inherit}button{cursor:pointer}.shell{max-width:520px;min-height:100vh;margin:auto;padding:env(safe-area-inset-top) 18px calc(104px + env(safe-area-inset-bottom));overflow:hidden;background:var(--bg)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 20px}.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:900;letter-spacing:-.6px}.logo{width:42px;height:42px;border-radius:15px;background:linear-gradient(145deg,var(--purple),#a58cff 55%,var(--mint));color:white;display:grid;place-items:center;font-size:22px;box-shadow:0 7px 18px #7655f638}.brand small{display:block;font-size:9px;letter-spacing:1.7px;color:var(--muted);font-weight:900}.top-actions{display:flex;gap:9px}.round{width:40px;height:40px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);display:grid;place-items:center;font-size:18px;box-shadow:var(--shadow)}
-.screen{display:none;animation:fadeUp .35s ease both}.screen.active{display:block}.welcome{min-height:calc(100svh - 160px);display:flex;flex-direction:column;justify-content:center;padding:16px 0 34px}.welcome-art{height:240px;border-radius:34px;background:linear-gradient(145deg,#7655f6,#a88cff 58%,#65ddca);position:relative;overflow:hidden;display:grid;place-items:center;box-shadow:0 22px 45px #7655f62b;margin-bottom:28px}.welcome-art:before,.welcome-art:after{content:'';position:absolute;border:1px solid #ffffff65;border-radius:50%;width:260px;height:260px}.welcome-art:after{width:340px;height:340px}.phone{z-index:1;width:136px;height:178px;border:5px solid #fff;border-radius:28px;background:linear-gradient(150deg,#29234b,#17152c);box-shadow:0 18px 35px #29204b66;display:grid;place-items:center;transform:rotate(-8deg)}.play{width:62px;height:62px;border-radius:22px;background:linear-gradient(135deg,#ffd36d,#ff9dba);display:grid;place-items:center;font-size:25px;color:#32234e;box-shadow:0 10px 22px #ffb2a755}.spark{position:absolute;font-size:36px;z-index:2}.s1{top:35px;left:34px}.s2{right:32px;bottom:34px}.s3{right:54px;top:25px;font-size:23px}.kicker{color:var(--purple);font-size:11px;font-weight:900;letter-spacing:1.8px}.welcome h1{font-size:38px;line-height:1.08;letter-spacing:-1.6px;margin:9px 0 12px;font-weight:900}.gradient{background:linear-gradient(90deg,var(--purple),#e276a6);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{color:var(--muted);font-size:15px;margin:0 0 22px}.dots{display:flex;gap:7px;margin:0 0 18px}.dots i{height:6px;width:22px;border-radius:8px;background:var(--line)}.dots i.on{width:34px;background:var(--purple)}.btn{border:0;border-radius:17px;padding:14px 20px;background:var(--purple);color:#fff;font-weight:900;box-shadow:0 9px 20px #7655f638;transition:transform .18s,filter .18s}.btn:active{transform:scale(.97);filter:brightness(1.08)}.btn.secondary{background:var(--surface2);color:var(--purple);box-shadow:none}.btn.full{width:100%}.textbtn{border:0;background:none;color:var(--muted);font-weight:800;padding:12px}
-.greeting{display:flex;align-items:center;justify-content:space-between;margin:2px 0 16px}.greeting h1{font-size:27px;line-height:1.15;letter-spacing:-1px;margin:3px 0;font-weight:900}.greeting p{margin:0;color:var(--muted);font-size:13px}.streak{background:#fff1d4;color:#8c5b00;border-radius:14px;padding:9px 11px;font-weight:900;font-size:12px}.hero{border-radius:28px;padding:21px;position:relative;overflow:hidden;background:linear-gradient(115deg,#7655f6,#a58bff 62%,#69dcca);color:#fff;box-shadow:0 16px 32px #7655f62b}.hero:after{content:'✦';position:absolute;right:18px;top:0;font-size:115px;opacity:.15;transform:rotate(16deg)}.hero .kicker{color:#e9e2ff}.hero h2{font-size:25px;line-height:1.12;max-width:255px;margin:7px 0}.hero p{font-size:12px;max-width:240px;color:#f0ecff;margin:0 0 16px}.hero .btn{background:#fff;color:#6042d5;box-shadow:none;position:relative;z-index:1;padding:11px 16px;font-size:13px}
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 2px 13px}.section-title h2{font-size:18px;margin:0;font-weight:900}.section-title button{border:0;background:none;color:var(--purple);font-weight:900;font-size:12px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px 9px}.tile{background:transparent;border:0;border-radius:18px;padding:4px 1px;text-align:center;color:var(--ink);box-shadow:none;min-height:108px;transition:transform .2s}.tile:active{transform:scale(.93)}.tile .ico{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;font-size:27px;margin:0 auto 7px;background:linear-gradient(145deg,#eee9ff,#ded5ff);box-shadow:0 7px 16px #7655f61c}.tile:nth-child(2) .ico{background:linear-gradient(145deg,#dcf8f2,#b9f0e5)}.tile:nth-child(3) .ico{background:linear-gradient(145deg,#ffe7ed,#ffc8d4)}.tile:nth-child(4) .ico{background:linear-gradient(145deg,#fff1d5,#ffe0a0)}.tile:nth-child(5) .ico{background:linear-gradient(145deg,#e4f1ff,#c5e2ff)}.tile:nth-child(6) .ico{background:linear-gradient(145deg,#f4e5ff,#e3c5ff)}.tile:nth-child(7) .ico{background:linear-gradient(145deg,#ffe9d8,#ffd0aa)}.tile strong{display:block;font-size:11px;line-height:1.2;font-weight:900}.tile small{display:none}.quick-create{margin-top:18px;padding:17px;border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.quick-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.quick-top strong{font-size:15px;font-weight:900}.quick-top span{font-size:10px;color:var(--muted)}.quick-input{width:100%;min-height:62px;resize:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:15px;padding:12px;outline:none;font:inherit;font-size:12px}.quick-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px}.quick-actions small{color:var(--muted);font-size:10px}.widecard{margin-top:12px;padding:15px;border-radius:21px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;gap:13px;box-shadow:var(--shadow)}.widecard .ico{width:46px;height:46px;border-radius:16px;background:#fff0d2;display:grid;place-items:center;font-size:23px}.widecard div:nth-child(2){flex:1}.widecard strong{font-weight:900}.widecard small{display:block;color:var(--muted);font-size:11px}.pill{font-size:9px;font-weight:900;color:#7655f6;background:#eee9ff;border-radius:20px;padding:5px 8px}
-.feature-head{display:flex;align-items:center;gap:12px;margin:10px 0 20px}.back{width:42px;height:42px;border-radius:15px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px}.feature-head h1{font-size:23px;margin:0;font-weight:900}.feature-head p{font-size:12px;color:var(--muted);margin:0}.formcard{padding:18px;border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.formcard label{display:block;font-size:12px;font-weight:900;margin:0 0 7px}.field{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:13px;outline:none;margin-bottom:15px}.field:focus{border-color:var(--purple);box-shadow:0 0 0 3px #7655f61a}.field.textarea{min-height:130px;resize:vertical}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:-3px 0 16px}.chip{border:1px solid var(--line);border-radius:30px;background:var(--surface);color:var(--muted);padding:8px 12px;font-size:11px;font-weight:800}.chip.selected{background:#eee9ff;border-color:#c8baff;color:#6948e5}.hint{color:var(--muted);font-size:11px;margin:12px 0 0}.previewbox{border-radius:22px;background:linear-gradient(145deg,#ece7ff,#d9f8f0);height:175px;display:grid;place-items:center;text-align:center;color:#6048bf;margin-bottom:16px}.previewbox span{display:block;font-size:42px}.profile-card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:19px;box-shadow:var(--shadow);text-align:center}.profile-avatar{width:76px;height:76px;border-radius:26px;background:linear-gradient(140deg,var(--purple),var(--mint));display:grid;place-items:center;margin:0 auto 10px;color:white;font-size:31px}.profile-card h2{margin:0;font-size:20px}.profile-card p{margin:3px 0 14px;color:var(--muted);font-size:12px}.setting{display:flex;align-items:center;gap:12px;padding:15px 3px;border-bottom:1px solid var(--line)}.setting:last-child{border:0}.setting .ico{width:38px;height:38px;border-radius:13px;background:var(--surface2);display:grid;place-items:center}.setting div:nth-child(2){flex:1;font-weight:800;font-size:13px}.setting small{display:block;color:var(--muted);font-weight:600;font-size:10px}.switch{accent-color:var(--purple);width:20px;height:20px}
-.bottomnav{position:fixed;z-index:5;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);display:flex;justify-content:space-around;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 90%,transparent);border-top:1px solid var(--line);backdrop-filter:blur(20px)}.bottomnav button{border:0;background:none;color:var(--muted);font-size:10px;font-weight:800;min-width:62px;padding:3px}.bottomnav b{display:block;font-size:20px;margin-bottom:1px}.bottomnav button.active{color:var(--purple)}.toast{position:fixed;left:50%;bottom:95px;transform:translate(-50%,15px);opacity:0;background:#28213f;color:#fff;padding:11px 16px;border-radius:14px;font-size:12px;z-index:10;transition:.25s;pointer-events:none;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@media(min-width:700px){body{padding:20px 0}.shell{border:1px solid var(--line);border-radius:32px;min-height:calc(100vh - 40px)}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-</style></head>
-<body><main class="shell">
-<header class="topbar"><div class="brand"><div class="logo">✦</div><div>VibeFlow AI<small>CREATE WITHOUT LIMITS</small></div></div><div class="top-actions"><button class="round" id="themeBtn" aria-label="Toggle theme">☾</button><button class="round" onclick="showScreen('profile')" aria-label="Profile">☺</button></div></header>
-
-<section class="screen active" id="onboarding">
-<div class="welcome"><div class="welcome-art"><span class="spark s1">✦</span><span class="spark s2">✧</span><span class="spark s3">☼</span><div class="phone"><div class="play">▶</div></div></div><div class="kicker" id="stepLabel">WELCOME TO YOUR STUDIO · 01</div><h1 id="welcomeTitle">Your ideas deserve the <span class="gradient">big screen.</span></h1><p class="lead" id="welcomeText">Create scroll-stopping videos, stunning visuals and voiceovers — all from one creative space.</p><div class="dots"><i class="on"></i><i></i><i></i></div><button class="btn full" id="onboardNext">Let's create ✨</button><button class="textbtn" id="skipOnboard">Skip intro</button></div>
+:root{color-scheme:dark;--bg:#090b12;--panel:#141824;--line:#262d3d;--muted:#9aa4b7;--text:#f5f7fb;--purple:#a78bfa;--cyan:#67e8f9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#29234a 0,transparent 48%),var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:960px;margin:auto;padding:22px 18px 110px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}.brand{display:flex;gap:11px;align-items:center;font-weight:800}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(140deg,#b7a1ff,#6e5de7 55%,#37c8bd);display:grid;place-items:center;font-size:22px}.pill{border:1px solid var(--line);border-radius:30px;padding:7px 11px;color:var(--muted);font-size:11px}.eyebrow{color:#b9a7ff;font-size:11px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(34px,8vw,54px);line-height:1.02;letter-spacing:-2px;margin:9px 0 12px}.hero p{color:var(--muted);max-width:560px;margin:0 0 28px}.section{display:flex;justify-content:space-between;align-items:end;margin:30px 0 13px}.section h2{font-size:18px;margin:0}.section span{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile{background:linear-gradient(145deg,#171d2b,#111621);border:1px solid var(--line);border-radius:19px;padding:17px;min-height:138px;color:inherit;text-decoration:none;display:flex;flex-direction:column;justify-content:space-between;transition:.2s}.tile:active{transform:scale(.98)}.tile .ico{width:42px;height:42px;border-radius:14px;background:#27213e;display:grid;place-items:center;font-size:21px}.tile h3{margin:13px 0 2px;font-size:15px}.tile p{margin:0;color:var(--muted);font-size:12px}.wide{grid-column:1/-1;min-height:110px;display:flex;flex-direction:row;align-items:center;gap:15px}.wide .ico{flex:none}.wide .details{flex:1}.tag{font-size:10px;color:#c4b5fd;border:1px solid #514477;border-radius:20px;padding:5px 8px}.notice{margin-top:24px;padding:15px;border:1px solid var(--line);border-radius:16px;color:var(--muted);font-size:12px}.bottom{position:fixed;bottom:0;left:0;right:0;background:#0b0e17ed;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:clamp(22px,8vw,70px);padding:12px 12px calc(12px + env(safe-area-inset-bottom));z-index:2}.bottom a{color:var(--muted);text-decoration:none;font-size:11px;text-align:center}.bottom b{display:block;font-size:18px;margin-bottom:2px;color:var(--text)}@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wide{grid-column:auto;display:flex;flex-direction:column;align-items:stretch}.wide .ico{flex:none}.wide .details{flex:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top"><div class="brand"><div class="logo">✦</div><div>VibeFlow AI<small style="display:block;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:1.5px">CREATIVE STUDIO</small></div></div><span class="pill">BETA STUDIO</span></header>
+<section class="hero"><div class="eyebrow">CREATE WITHOUT LIMITS</div><h1>Your ideas.<br><span style="background:linear-gradient(90deg,#c4b5fd,#67e8f9);background-clip:text;color:transparent">Your Vibe.</span></h1><p>One creative space for scripts, voices and AI-powered video production.</p></section>
+<div class="section"><h2>Start creating</h2><span>Choose a tool</span></div>
+<section class="grid">
+<a class="tile" href="#video"><div class="ico">🎬</div><div><h3>AI Video</h3><p>Turn ideas into videos</p></div></a>
+<a class="tile" href="#humans"><div class="ico">🧑‍🚀</div><div><h3>AI Humans</h3><p>Create presenter concepts</p></div></a>
+<a class="tile" href="#images"><div class="ico">🖼️</div><div><h3>AI Images</h3><p>Make visual concepts</p></div></a>
+<a class="tile" href="#scripts"><div class="ico">✍️</div><div><h3>Script Writer</h3><p>Build your video story</p></div></a>
+<a class="tile" href="voice.html"><div class="ico">🎙️</div><div><h3>AI Voice</h3><p>Generate spoken audio</p></div></a>
+<a class="tile" href="#captions"><div class="ico">💬</div><div><h3>Captions</h3><p>Plan subtitles and text</p></div></a>
+<a class="tile" href="#editor"><div class="ico">✂️</div><div><h3>Video Editor</h3><p>Editing workspace</p></div></a>
+<a class="tile" href="#music"><div class="ico">🎵</div><div><h3>Music & FX</h3><p>Sound and atmosphere</p></div></a>
+<a class="tile wide" href="#twin"><div class="ico">✨</div><div class="details"><h3>My AI Twin</h3><p>Personal presenter setup — face animation and voice cloning are not connected yet.</p></div><span class="tag">IN DEVELOPMENT</span></a>
 </section>
-
-<section class="screen" id="home">
-<div class="greeting"><div><p>MONDAY, CREATOR ✨</p><h1>Hey, welcome back!</h1><p>What will you make today?</p></div><div class="streak">⚡ Creator mode</div></div>
-<div class="hero"><div class="kicker">YOUR NEXT BIG IDEA STARTS HERE</div><h2>Make something people can't stop watching.</h2><p>Turn a simple idea into a story worth sharing.</p><button class="btn" onclick="showScreen('create')">Start a project&nbsp; ↗</button></div>
-<div class="quick-create"><div class="quick-top"><strong>⚡ Quick Create</strong><span>YOUR NEXT IDEA</span></div><textarea class="quick-input" id="quickIdea" placeholder="Describe the video you want to create..."></textarea><div class="quick-actions"><small>Start with a simple prompt</small><button class="btn" style="padding:10px 15px;font-size:12px" onclick="startQuickCreate()">Create video ↗</button></div></div>
-<div class="section-title"><h2>Your AI tools</h2><button onclick="showScreen('create')">Explore all</button></div>
-<div class="grid">
-<button class="tile" onclick="showScreen('create')"><span class="ico">🎬</span><strong>AI Video</strong></button>
-<button class="tile" onclick="showScreen('create')"><span class="ico">🧑‍🚀</span><strong>AI Humans</strong></button>
-<button class="tile" onclick="showScreen('create')"><span class="ico">🪄</span><strong>AI Images</strong></button>
-<button class="tile" onclick="showScreen('create')"><span class="ico">✍️</span><strong>Scripts</strong></button>
-<button class="tile" onclick="location.href='voice.html'"><span class="ico">🎙️</span><strong>AI Voice</strong></button>
-<button class="tile" onclick="showScreen('create')"><span class="ico">💬</span><strong>Captions</strong></button>
-<button class="tile" onclick="showScreen('create')"><span class="ico">✂️</span><strong>Editor</strong></button>
-</div>
-<div class="widecard"><div class="ico">✨</div><div><strong>Your AI Twin</strong><small>Your own digital presenter is on the roadmap</small></div><span class="pill">COMING SOON</span></div>
-</section>
-
-<section class="screen" id="create">
-<div class="feature-head"><button class="back" onclick="showScreen('home')">‹</button><div><h1>Let's make magic</h1><p>Start with an idea. We'll shape it together.</p></div></div>
-<div class="previewbox"><div><span>🎥</span><strong>Your next video starts here</strong><div style="font-size:11px">A little idea can go a long way.</div></div></div>
-<div class="formcard"><label for="idea">What's your video about?</label><textarea class="field textarea" id="idea" placeholder="E.g. A cinematic GTA-inspired city at night, with a dramatic opening..."></textarea><label>Choose a format</label><div class="chips" id="formats"><button class="chip selected">Short video</button><button class="chip">YouTube video</button><button class="chip">Story / Reel</button></div><label>Pick a vibe</label><div class="chips" id="vibes"><button class="chip selected">Cinematic</button><button class="chip">Fun</button><button class="chip">Inspirational</button><button class="chip">Realistic</button></div><label for="duration">Video length</label><select class="field" id="duration"><option>30 seconds</option><option>60 seconds</option><option>2 minutes</option><option>5 minutes</option></select><button class="btn full" id="generateBtn">Generate AI script ✨</button><p class="hint">VibeFlow will turn your idea into a script and scene plan. This creates a script, not a finished video.</p><section id="scriptResult" class="formcard" style="display:none;margin-top:15px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px"><strong>Your AI script</strong><span class="pill">GENERATED</span></div><pre id="scriptOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13px;color:var(--ink);margin:0"></pre><div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px"><button class="btn secondary" id="copyScript" type="button">Copy script</button><button class="btn" id="sendToVoice" type="button">Use in Voice Studio ↗</button></div><p class="hint">Voice Studio currently accepts up to 200 characters per generation.</p></section>
-<div style="height:1px;background:var(--line);margin:20px 0"></div>
-<label for="videoRatio">Video orientation</label>
-<select class="field" id="videoRatio"><option value="1280:720">Landscape · YouTube</option><option value="720:1280">Portrait · Shorts / Reels / TikTok</option></select>
-<button class="btn full" id="generateVideoBtn" type="button">Generate 5-second AI video 🎬</button>
-<p class="hint">This uses paid Runway credits. You will be asked to confirm before any video is generated. The first test is limited to 5 seconds.</p>
-<section id="videoResult" class="formcard" style="display:none;margin-top:15px">
-<strong id="videoStatus">Preparing your video…</strong>
-<p class="hint" id="videoStatusDetail">Keep this page open while Runway works.</p>
-<video id="generatedVideo" controls playsinline style="display:none;width:100%;border-radius:16px;margin-top:12px;background:#111"></video>
-<a id="downloadVideo" class="btn full" style="display:none;text-align:center;text-decoration:none;margin-top:12px" download="vibeflow-video.mp4">Download video</a>
-</section></div>
-</section>
-
-<section class="screen" id="projects"><div class="feature-head"><div><h1>My projects</h1><p>Your creative journey, all in one place.</p></div></div><div class="previewbox"><div><span>🗂️</span><strong>Your project space is ready</strong><div style="font-size:11px">Start creating and your projects will live here.</div></div></div><button class="btn full" onclick="showScreen('create')">＋ Start a project</button></section>
-
-<section class="screen" id="profile"><div class="feature-head"><div><h1>Your space</h1><p>Make VibeFlow feel like yours.</p></div></div><div class="profile-card"><div class="profile-avatar">✦</div><h2>Creator profile</h2><p>Your creative journey starts here</p><button class="btn secondary" onclick="toast('Profile editing is coming soon')">Edit profile</button></div><div class="formcard" style="margin-top:15px"><div class="setting"><span class="ico">🎨</span><div>Appearance<small>Choose your studio look</small></div><button class="btn secondary" style="padding:8px 12px" id="themeText">Light</button></div><div class="setting"><span class="ico">🔔</span><div>Notifications<small>Stay in the creative loop</small></div><input class="switch" type="checkbox" checked aria-label="Notifications"></div><div class="setting"><span class="ico">🔒</span><div>Privacy & safety<small>Your creations should stay yours</small></div><span>›</span></div><div class="setting"><span class="ico">💬</span><div>Help & support<small>We're here to help</small></div><span>›</span></div></div></section>
+<div class="notice">This is the initial studio foundation. Tools marked in development are not yet connected to generation services. Your media should not be uploaded until secure storage and deletion controls are ready.</div>
 </main>
-<nav class="bottomnav" id="bottomnav" hidden><button class="active" data-screen="home"><b>⌂</b>Home</button><button data-screen="projects"><b>▤</b>Projects</button><button data-screen="create"><b>＋</b>Create</button><button data-screen="profile"><b>☺</b>Profile</button></nav><div class="toast" id="toast"></div>
-<script>
-const screens=['onboarding','home','create','projects','profile'];let onboardStep=0;const onboard=[['WELCOME TO YOUR STUDIO · 01','Your ideas deserve the <span class="gradient">big screen.</span>','Create scroll-stopping videos, stunning visuals and voiceovers — all from one creative space.'],['YOUR TOOLS · 02','Everything you need to <span class="gradient">create.</span>','Write scripts, build visuals, make voiceovers and shape your next great video.'],['YOUR TURN · 03','Ready to make some <span class="gradient">noise?</span>','Your creative studio is ready. Let’s turn that idea in your head into something real.']];
-function showScreen(id){screens.forEach(s=>document.getElementById(s).classList.toggle('active',s===id));document.getElementById('bottomnav').hidden=id==='onboarding';document.querySelectorAll('.bottomnav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));window.scrollTo({top:0,behavior:'smooth'})}
-function finishOnboard(){showScreen('home')}\nfunction startQuickCreate(){const v=document.getElementById('quickIdea').value.trim();if(!v){toast('Describe your video idea first ✨');return}document.getElementById('idea').value=v;showScreen('create')}
-document.getElementById('onboardNext').onclick=()=>{onboardStep++;if(onboardStep>=3){finishOnboard();return}const d=onboard[onboardStep];document.getElementById('stepLabel').textContent=d[0];document.getElementById('welcomeTitle').innerHTML=d[1];document.getElementById('welcomeText').textContent=d[2];document.querySelectorAll('.dots i').forEach((x,i)=>x.classList.toggle('on',i===onboardStep));document.getElementById('onboardNext').textContent=onboardStep===2?'Enter my studio ✨':'Continue →'};
-document.getElementById('skipOnboard').onclick=finishOnboard;document.querySelectorAll('.bottomnav button').forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
-document.querySelectorAll('.chips').forEach(group=>group.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{group.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected'));ch.classList.add('selected')}));
-function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500)}
-const generateBtn=document.getElementById('generateBtn');
-let latestScript='';
-generateBtn.onclick=async()=>{
-  const idea=document.getElementById('idea').value.trim();
-  if(!idea){toast('Add your video idea first ✨');return}
-  const format=document.querySelector('#formats .chip.selected')?.textContent.trim()||'Short video';
-  const vibe=document.querySelector('#vibes .chip.selected')?.textContent.trim()||'Cinematic';
-  const duration=document.getElementById('duration').value;
-  const result=document.getElementById('scriptResult');
-  generateBtn.disabled=true;generateBtn.textContent='Writing your script…';result.style.display='none';
-  try{
-    const response=await fetch('/api/script',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea,format,vibe,duration})});
-    const data=await response.json();if(!response.ok)throw new Error(data.error||'Script generation failed. Please try again.');
-    latestScript=data.script;document.getElementById('scriptOutput').textContent=latestScript;result.style.display='block';result.scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(error){toast(error.message||'Could not generate your script.')}finally{generateBtn.disabled=false;generateBtn.textContent='Generate AI script ✨'}
-};
-document.getElementById('copyScript').onclick=async()=>{if(!latestScript)return;try{await navigator.clipboard.writeText(latestScript);toast('Script copied ✨')}catch{toast('Copy is not available in this browser')}};
-document.getElementById('sendToVoice').onclick=()=>{if(!latestScript)return;localStorage.setItem('vf-voice-draft',latestScript.slice(0,200));location.href='voice.html'};
-const generateVideoBtn=document.getElementById('generateVideoBtn');
-generateVideoBtn.onclick=async()=>{
-  const idea=document.getElementById('idea').value.trim();
-  if(!idea){toast('Add your video idea first ✨');return}
-  const vibe=document.querySelector('#vibes .chip.selected')?.textContent.trim()||'Cinematic';
-  const ratio=document.getElementById('videoRatio').value;
-  const approved=window.confirm('This will use paid Runway credits to generate one 5-second AI video. Continue?');
-  if(!approved)return;
-  const result=document.getElementById('videoResult');
-  const status=document.getElementById('videoStatus');
-  const detail=document.getElementById('videoStatusDetail');
-  const player=document.getElementById('generatedVideo');
-  const download=document.getElementById('downloadVideo');
-  result.style.display='block';player.style.display='none';download.style.display='none';
-  status.textContent='Sending your idea to Runway…';detail.textContent='Your video task is being created.';
-  generateVideoBtn.disabled=true;generateVideoBtn.textContent='Creating video…';
-  try{
-    const start=await fetch('/api/video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:vibe+' style. '+idea,ratio,duration:5})});
-    const task=await start.json();
-    if(!start.ok)throw new Error(task.error||'Could not start video generation.');
-    if(!task.taskId)throw new Error('Runway did not return a video task ID.');
-    status.textContent='Your video is rendering ✨';
-    detail.textContent='This can take a few minutes. Please keep this page open.';
-    let finished=false;
-    for(let attempt=0;attempt<60;attempt++){
-      await new Promise(resolve=>setTimeout(resolve,5000));
-      const check=await fetch('/api/video?taskId='+encodeURIComponent(task.taskId));
-      const state=await check.json();
-      if(!check.ok)throw new Error(state.error||'Could not check video progress.');
-      if(state.status==='SUCCEEDED'&&state.videoUrl){
-        player.src=state.videoUrl;player.style.display='block';download.href=state.videoUrl;download.style.display='block';
-        status.textContent='Your AI video is ready!';detail.textContent='Preview it here or download your 5-second clip.';
-        finished=true;break;
-      }
-      if(state.status==='FAILED'||state.status==='CANCELED'){
-        throw new Error('Runway could not complete this video. Please try another prompt.');
-      }
-      detail.textContent='Rendering… status: '+state.status;
-    }
-    if(!finished){status.textContent='Video is taking longer than expected';detail.textContent='Your task may still be processing. Try again later rather than submitting another paid request.'}
-  }catch(error){status.textContent='Video generation stopped';detail.textContent=error.message||'Please try again.';toast(error.message||'Video generation failed.')}
-  finally{generateVideoBtn.disabled=false;generateVideoBtn.textContent='Generate 5-second AI video 🎬'}
-  result.scrollIntoView({behavior:'smooth',block:'start'});
-};
-function setTheme(dark){document.documentElement.dataset.theme=dark?'dark':'light';document.getElementById('themeBtn').textContent=dark?'☀':'☾';document.getElementById('themeText').textContent=dark?'Dark':'Light';localStorage.setItem('vf-theme',dark?'dark':'light')}
-const dark=localStorage.getItem('vf-theme')==='dark';setTheme(dark);document.getElementById('themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');document.getElementById('themeText').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-</script></body></html>
+<nav class="bottom"><a href="index.html"><b>⌂</b>Home</a><a href="#projects"><b>▤</b>Projects</a><a href="#templates"><b>▦</b>Templates</a><a href="#profile"><b>◉</b>Profile</a></nav>
+</body></html>
