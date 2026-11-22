@@ -36,7 +36,7 @@
 <div class="modal-backdrop" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
  <div class="modal">
   <h2 id="videoTitle">🎬 AI Video Test</h2>
-  <p>Our first model test: generate a 5-second cinematic video. Runway API generation uses paid credits.</p>
+  <p>Our first model test: generate a 5-second cinematic video with Agnes AI 2.5 Flash at 720p. Free access and quotas depend on your Agnes account.</p>
   <label for="videoPrompt">Video description</label>
   <textarea id="videoPrompt">A cinematic, ultra-realistic open-world crime city at night, inspired by modern action video games. A black luxury sports car speeds through neon-lit streets in a futuristic American city. Police vehicles chase behind with flashing red and blue lights. The camera follows the car from a dramatic low-angle tracking shot. Rain reflects the colourful city lights on the road. Realistic human pedestrians, detailed buildings, dramatic atmosphere, smooth camera movement, high-end video game graphics, 4K cinematic quality.</textarea>
   <label for="videoRatio">Orientation</label>
@@ -76,8 +76,8 @@
  document.getElementById('runVideo').addEventListener('click',async()=>{
   const text=prompt.value.trim();
   if(!text){status.textContent='Please enter a video description.';return;}
-  if(!confirm('This test sends a request to Runway and uses paid API credits. Continue?'))return;
-  const btn=document.getElementById('runVideo');btn.disabled=true;status.textContent='Sending your request to the video model…';
+  if(!confirm('This sends a video-generation request to Agnes AI. Its current Flash promotion is listed as free, but availability and quotas can change. Continue?'))return;
+  const btn=document.getElementById('runVideo');btn.disabled=true;status.textContent='Sending your request to Agnes AI…';
   try{
    const start=await fetch('/api/video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:text,ratio:document.getElementById('videoRatio').value,duration:5})});
    const task=await start.json();if(!start.ok)throw new Error(task.error||'Could not start the video.');
