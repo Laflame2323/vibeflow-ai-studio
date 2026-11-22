@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           model: "hailuo3_lite",
           promptText: prompt.trim(),
-          ratio,
+          ratio: ratio === "1280:720" ? "16:9" : "9:16",
           duration
         })
       });
