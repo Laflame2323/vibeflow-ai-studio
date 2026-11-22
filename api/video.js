@@ -54,10 +54,10 @@ export default async function handler(req, res) {
         return res.status(response.status === 429 ? 429 : 502).json({ error: safeError(response.status, data) });
       }
 
-      const videoId = data.video_id || data.task_id || data.id;
+      const videoId = data.video_id;
       if (!videoId || typeof videoId !== "string") {
-        console.error("Agnes response missing video identifier:", JSON.stringify(data).slice(0, 500));
-        return res.status(502).json({ error: "Agnes accepted an unexpected response. No video task ID was returned." });
+        console.error("Agnes response missing video_id:", JSON.stringify(data).slice(0, 500));
+        return res.status(502).json({ error: "Agnes accepted an unexpected response. No video_id was returned." });
       }
       return res.status(200).json({
         taskId: videoId,
@@ -78,7 +78,6 @@ export default async function handler(req, res) {
     try {
       const url = new URL(`${API_BASE}/agnesapi`);
       url.searchParams.set("video_id", videoId);
-      url.searchParams.set("model_name", MODEL);
       const response = await fetch(url.toString(), {
         method: "GET",
         headers: { Authorization: `Bearer ${apiKey}` }
