@@ -15,14 +15,16 @@ export default async function handler(req, res) {
   if (!messages.length || messages[messages.length - 1].role !== "user") {
     return res.status(400).json({ error: "Send a message to Flames first." });
   }
-  const liveContext = new Intl.DateTimeFormat("en-NG", { timeZone: "Africa/Lagos", dateStyle: "full", timeStyle: "long" }).format(new Date());
+  const now = new Date();
+  const liveContext = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Lagos", dateStyle: "full", timeStyle: "long", hourCycle: "h23" }).format(now);
+  const memory = typeof req.body?.memory === "string" ? req.body.memory.slice(0, 3000) : "";
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "openai/gpt-oss-20b",
-        messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\n" + liveContext }, ...messages],
+        messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\nAUTHORITATIVE NIGERIA CLOCK: " + liveContext + " (Africa/Lagos, UTC+01:00). This is the actual current date and time at the moment this request reached the server. If asked for the current time or date, use this exact context; never guess, use a device clock, or invent another time.\\n\\nLEARNING AND PERSONALIZATION: Use the recent conversation and the user-provided saved notes below to adapt to the user. Treat corrections as important guidance. Learn their preferred style, constraints, and workflow from what they tell you. Do not claim permanent learning beyond the saved notes and conversation supplied with each request. Do not save sensitive information or passwords.\\n\\nUSER-SAVED NOTES:\\n" + (memory || "No saved notes yet.") }, ...messages],
         temperature: 0.7,
         max_completion_tokens: 450
       })
