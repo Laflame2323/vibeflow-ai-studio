@@ -1,10 +1,12 @@
 const MODEL = "agnes-video-2.5-flash";
 const API_BASE = "https://apihub.agnes-ai.com";
 
-function safeError(status) {
+function safeError(status, data = {}) {
+  if (data.code === "video_queue_full") return "Agnes video queue is full right now. Please wait a few minutes and try again.";
   if (status === 401 || status === 403) return "Agnes rejected the API key. Check AGNES_API_KEY in Vercel.";
   if (status === 429) return "Agnes rate limit reached. Wait a minute before trying again.";
   if (status === 402) return "Agnes reports that this account needs credits or an eligible plan.";
+  if (status === 503) return "Agnes video service is temporarily unavailable. Please try again shortly.";
   return "Agnes could not process the video request. Check your Agnes account and model access.";
 }
 
@@ -49,7 +51,7 @@ export default async function handler(req, res) {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
         console.error("Agnes create task failed:", response.status, JSON.stringify(data).slice(0, 500));
-        return res.status(response.status === 429 ? 429 : 502).json({ error: safeError(response.status) });
+        return res.status(response.status === 429 ? 429 : 502).json({ error: safeError(response.status, data) });
       }
 
       const videoId = data.video_id || data.task_id || data.id;
@@ -84,7 +86,7 @@ export default async function handler(req, res) {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
         console.error("Agnes task lookup failed:", response.status, JSON.stringify(data).slice(0, 500));
-        return res.status(response.status === 429 ? 429 : 502).json({ error: safeError(response.status) });
+        return res.status(response.status === 429 ? 429 : 502).json({ error: safeError(response.status, data) });
       }
       const state = String(data.status || "pending").toLowerCase();
       return res.status(200).json({
