@@ -43,7 +43,7 @@
 <section class="screen" id="create">
 <div class="feature-head"><button class="back" onclick="showScreen('home')">‹</button><div><h1>Let's make magic</h1><p>Start with an idea. We'll shape it together.</p></div></div>
 <div class="previewbox"><div><span>🎥</span><strong>Your next video starts here</strong><div style="font-size:11px">A little idea can go a long way.</div></div></div>
-<div class="formcard"><label for="idea">What's your video about?</label><textarea class="field textarea" id="idea" placeholder="E.g. A cinematic GTA-inspired city at night, with a dramatic opening..."></textarea><label>Choose a format</label><div class="chips" id="formats"><button class="chip selected">Short video</button><button class="chip">YouTube video</button><button class="chip">Story / Reel</button></div><label>Pick a vibe</label><div class="chips" id="vibes"><button class="chip selected">Cinematic</button><button class="chip">Fun</button><button class="chip">Inspirational</button><button class="chip">Realistic</button></div><label for="duration">Video length</label><select class="field" id="duration"><option>30 seconds</option><option>60 seconds</option><option>2 minutes</option><option>5 minutes</option></select><button class="btn full" id="generateBtn">Create my video plan ✨</button><p class="hint">This is the design prototype. AI video generation will be connected in a later build; your prompt is not sent to a generation service yet.</p></div>
+<div class="formcard"><label for="idea">What's your video about?</label><textarea class="field textarea" id="idea" placeholder="E.g. A cinematic GTA-inspired city at night, with a dramatic opening..."></textarea><label>Choose a format</label><div class="chips" id="formats"><button class="chip selected">Short video</button><button class="chip">YouTube video</button><button class="chip">Story / Reel</button></div><label>Pick a vibe</label><div class="chips" id="vibes"><button class="chip selected">Cinematic</button><button class="chip">Fun</button><button class="chip">Inspirational</button><button class="chip">Realistic</button></div><label for="duration">Video length</label><select class="field" id="duration"><option>30 seconds</option><option>60 seconds</option><option>2 minutes</option><option>5 minutes</option></select><button class="btn full" id="generateBtn">Generate AI script ✨</button><p class="hint">VibeFlow will turn your idea into a script and scene plan. This creates a script, not a finished video.</p><section id="scriptResult" class="formcard" style="display:none;margin-top:15px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px"><strong>Your AI script</strong><span class="pill">GENERATED</span></div><pre id="scriptOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13px;color:var(--ink);margin:0"></pre><div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px"><button class="btn secondary" id="copyScript" type="button">Copy script</button><button class="btn" id="sendToVoice" type="button">Use in Voice Studio ↗</button></div><p class="hint">Voice Studio currently accepts up to 200 characters per generation.</p></section></div>
 </section>
 
 <section class="screen" id="projects"><div class="feature-head"><div><h1>My projects</h1><p>Your creative journey, all in one place.</p></div></div><div class="previewbox"><div><span>🗂️</span><strong>Your project space is ready</strong><div style="font-size:11px">Start creating and your projects will live here.</div></div></div><button class="btn full" onclick="showScreen('create')">＋ Start a project</button></section>
@@ -59,7 +59,24 @@ document.getElementById('onboardNext').onclick=()=>{onboardStep++;if(onboardStep
 document.getElementById('skipOnboard').onclick=finishOnboard;document.querySelectorAll('.bottomnav button').forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
 document.querySelectorAll('.chips').forEach(group=>group.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{group.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected'));ch.classList.add('selected')}));
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500)}
-document.getElementById('generateBtn').onclick=()=>{const idea=document.getElementById('idea').value.trim();if(!idea){toast('Add your video idea first ✨');return}toast('Your idea is saved in this preview. AI generation is not connected yet.')};
+const generateBtn=document.getElementById('generateBtn');
+let latestScript='';
+generateBtn.onclick=async()=>{
+  const idea=document.getElementById('idea').value.trim();
+  if(!idea){toast('Add your video idea first ✨');return}
+  const format=document.querySelector('#formats .chip.selected')?.textContent.trim()||'Short video';
+  const vibe=document.querySelector('#vibes .chip.selected')?.textContent.trim()||'Cinematic';
+  const duration=document.getElementById('duration').value;
+  const result=document.getElementById('scriptResult');
+  generateBtn.disabled=true;generateBtn.textContent='Writing your script…';result.style.display='none';
+  try{
+    const response=await fetch('/api/script',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea,format,vibe,duration})});
+    const data=await response.json();if(!response.ok)throw new Error(data.error||'Script generation failed. Please try again.');
+    latestScript=data.script;document.getElementById('scriptOutput').textContent=latestScript;result.style.display='block';result.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(error){toast(error.message||'Could not generate your script.')}finally{generateBtn.disabled=false;generateBtn.textContent='Generate AI script ✨'}
+};
+document.getElementById('copyScript').onclick=async()=>{if(!latestScript)return;try{await navigator.clipboard.writeText(latestScript);toast('Script copied ✨')}catch{toast('Copy is not available in this browser')}};
+document.getElementById('sendToVoice').onclick=()=>{if(!latestScript)return;localStorage.setItem('vf-voice-draft',latestScript.slice(0,200));location.href='voice.html'};
 function setTheme(dark){document.documentElement.dataset.theme=dark?'dark':'light';document.getElementById('themeBtn').textContent=dark?'☀':'☾';document.getElementById('themeText').textContent=dark?'Dark':'Light';localStorage.setItem('vf-theme',dark?'dark':'light')}
 const dark=localStorage.getItem('vf-theme')==='dark';setTheme(dark);document.getElementById('themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');document.getElementById('themeText').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
 </script></body></html>
