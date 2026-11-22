@@ -15,6 +15,7 @@ export default async function handler(req, res) {
   if (!messages.length || messages[messages.length - 1].role !== "user") {
     return res.status(400).json({ error: "Send a message to Flames first." });
   }
+  const liveContext = new Intl.DateTimeFormat("en-NG", { timeZone: "Africa/Lagos", dateStyle: "full", timeStyle: "long" }).format(new Date());
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
