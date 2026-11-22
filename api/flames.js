@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "openai/gpt-oss-20b",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\n" + liveContext }, ...messages],
         temperature: 0.7,
         max_completion_tokens: 450
       })
