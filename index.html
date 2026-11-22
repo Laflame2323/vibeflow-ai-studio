@@ -150,9 +150,13 @@
  const launch=document.getElementById("flamesLaunch"),close=document.getElementById("flamesClose");
  const messages=document.getElementById("flamesMessages"),input=document.getElementById("flamesInput");
  const send=document.getElementById("flamesSend"),mic=document.getElementById("flamesMic"),status=document.getElementById("flamesStatus");
- let history=[],recognition=null,listening=false;
+ let history=[];try{history=JSON.parse(localStorage.getItem("flamesChatHistory")||"[]");if(!Array.isArray(history))history=[];history=history.filter(m=>m&&["user","assistant"].includes(m.role)&&typeof m.content==="string").slice(-20);}catch{history=[];}let recognition=null,listening=false;
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  function addMessage(text,who){const el=document.createElement("div");el.className="flames-msg "+who;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el;}
+ history.forEach(m=>addMessage(m.content,m.role==="user"?"user":"bot"));
+ if(history.length){const welcome=messages.querySelector(".flames-msg.bot");if(welcome)welcome.remove();}
+ function saveHistory(){try{localStorage.setItem("flamesChatHistory",JSON.stringify(history.slice(-20)));}catch(e){setStatus("Chat memory is full on this device.");}}
+ function getSavedNotes(){try{return localStorage.getItem("flamesSavedNotes")||"";}catch{return "";}}
  const voiceSelect=document.getElementById("flamesVoiceSelect"),autoSpeak=document.getElementById("flamesAutoSpeak"),settings=document.getElementById("flamesSettings");
  const settingsToggle=document.getElementById("flamesSettingsToggle");
  let availableVoices=[];
@@ -188,14 +192,15 @@
  async function sendMessage(text,voiceInput){
   const clean=text.trim();if(!clean)return;
   addMessage(clean,"user");input.value="";send.disabled=true;mic.disabled=true;setStatus("Flames is thinking…");
-  history.push({role:"user",content:clean});
+  history.push({role:"user",content:clean});saveHistory();
+  if(/^remember\\b/i.test(clean)){const old=getSavedNotes();const note=clean.replace(/^remember\\b[: ,]*/i,"").trim();if(note){const notes=(old?old+"\\n":"")+note;try{localStorage.setItem("flamesSavedNotes",notes.slice(-3000));}catch(e){}}}
   try{
-   const response=await fetch("/api/flames",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:history.slice(-12)})});
+   const response=await fetch("/api/flames",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:history.slice(-12),memory:getSavedNotes()})});
    const data=await response.json();if(!response.ok)throw new Error(data.error||"Flames couldn't respond. Try again.");
    const answer=String(data.reply||"I couldn't form a reply. Try asking again.");
-   history.push({role:"assistant",content:answer});addMessage(answer,"bot");setStatus("Ready when you are.");
+   history.push({role:"assistant",content:answer});saveHistory();addMessage(answer,"bot");setStatus("Ready when you are.");
    if(autoSpeak.checked)speak(answer);
-  }catch(error){history.pop();addMessage(error.message||"Connection error. Please try again.","bot");setStatus("Could not connect.");}
+  }catch(error){history.pop();saveHistory();addMessage(error.message||"Connection error. Please try again.","bot");setStatus("Could not connect.");}
   finally{send.disabled=false;mic.disabled=false;input.focus();}
  }
  send.addEventListener("click",()=>sendMessage(input.value,false));
