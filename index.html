@@ -22,6 +22,13 @@
 .flames-head{padding:15px 16px;background:linear-gradient(120deg,#292044,#151b2a);display:flex;align-items:center;gap:11px;border-bottom:1px solid #343047}
 .flames-avatar{width:42px;height:42px;border-radius:15px;background:linear-gradient(140deg,#c4b5fd,#4dd7d0);display:grid;place-items:center;color:#111;font-size:20px;font-weight:900}
 .flames-head strong{display:block}.flames-head small{color:#aeb6c9;font-size:11px}
+.flames-settings-btn{margin-left:auto;border:1px solid #ffffff24;background:#ffffff10;color:white;border-radius:10px;padding:8px 10px;font-size:16px}
+.flames-settings{display:none;padding:12px 14px;background:#171e2d;border-bottom:1px solid #30384b}
+.flames-settings.open{display:block}.flames-settings label{display:block;font-size:11px;color:#cbd2e1;margin:0 0 5px}
+.flames-settings select{width:100%;background:#090d16;color:white;border:1px solid #343c50;border-radius:10px;padding:10px;margin-bottom:9px;font:inherit;font-size:12px}
+.flames-setting-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.flames-setting-actions button{border:1px solid #454d64;background:#252d40;color:white;border-radius:9px;padding:8px 10px;font-size:11px}
+.flames-setting-actions label{display:flex;align-items:center;gap:7px;margin:0;font-size:11px}
 .flames-close{margin-left:auto;border:0;background:#ffffff12;color:white;border-radius:10px;padding:8px 11px;font-size:18px}
 .flames-messages{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px}
 .flames-msg{max-width:88%;padding:11px 13px;border-radius:15px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -75,8 +82,8 @@
 
 <button class="flames-launch" id="flamesLaunch" type="button" aria-label="Talk to Flames"><span class="flames-orb">✦</span> Ask Flames</button>
 <section class="flames-panel" id="flamesPanel" aria-label="Flames AI assistant">
- <header class="flames-head"><div class="flames-avatar">F</div><div><strong>Flames</strong><small>La Flame · VibeFlow AI assistant</small></div><button class="flames-close" id="flamesClose" type="button" aria-label="Close">×</button></header>
- <div class="flames-messages" id="flamesMessages" aria-live="polite"><div class="flames-msg bot">Yo! I'm Flames. Talk to me or type a message. What are we creating today?</div></div>
+ <header class="flames-head"><div class="flames-avatar">F</div><div><strong>Flames</strong><small>La Flame · VibeFlow AI assistant</small></div><button class="flames-settings-btn" id="flamesSettingsToggle" type="button" aria-label="Voice settings">⚙</button><button class="flames-close" id="flamesClose" type="button" aria-label="Close">×</button></header>
+ <div class="flames-settings" id="flamesSettings"><label for="flamesVoiceSelect">Flames voice</label><select id="flamesVoiceSelect"><option value="">Loading available voices…</option></select><div class="flames-setting-actions"><label><input id="flamesAutoSpeak" type="checkbox" checked> Speak every reply</label><button id="flamesTestVoice" type="button">Test voice</button></div><div class="flames-hint">Choose a voice available on this iPhone or browser.</div></div><div class="flames-messages" id="flamesMessages" aria-live="polite"><div class="flames-msg bot">Yo! I'm Flames. Talk to me or type a message. What are we creating today?</div></div>
  <div class="flames-compose"><div class="flames-status" id="flamesStatus">Ready when you are.</div><div class="flames-inputrow"><button class="flames-iconbtn" id="flamesMic" type="button" aria-label="Start voice input">🎙️</button><input id="flamesInput" type="text" maxlength="1200" placeholder="Message Flames…" autocomplete="off"><button class="flames-iconbtn flames-send" id="flamesSend" type="button" aria-label="Send">➤</button></div><div class="flames-hint">Tap the microphone to speak. Flames will answer aloud when voice mode is available.</div></div>
 </section>
 
@@ -140,7 +147,35 @@
  let history=[],recognition=null,listening=false;
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  function addMessage(text,who){const el=document.createElement("div");el.className="flames-msg "+who;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el;}
- function speak(text){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.rate=1.02;utterance.pitch=0.96;utterance.lang="en-US";window.speechSynthesis.speak(utterance);}
+ const voiceSelect=document.getElementById("flamesVoiceSelect"),autoSpeak=document.getElementById("flamesAutoSpeak"),settings=document.getElementById("flamesSettings");
+ const settingsToggle=document.getElementById("flamesSettingsToggle");
+ let availableVoices=[];
+ function loadVoices(){
+  if(!("speechSynthesis" in window))return;
+  availableVoices=window.speechSynthesis.getVoices();
+  const saved=localStorage.getItem("flamesVoiceURI")||"";
+  voiceSelect.innerHTML="";
+  if(!availableVoices.length){voiceSelect.add(new Option("Default device voice",""));return;}
+  voiceSelect.add(new Option("Default voice",""));
+  availableVoices.forEach((v)=>voiceSelect.add(new Option(v.name+" ("+v.lang+")",v.voiceURI)));
+  voiceSelect.value=saved;
+  if(saved&&!availableVoices.some(v=>v.voiceURI===saved))voiceSelect.value="";
+ }
+ if("speechSynthesis" in window){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;}
+ autoSpeak.checked=localStorage.getItem("flamesAutoSpeak")!=="false";
+ voiceSelect.addEventListener("change",()=>localStorage.setItem("flamesVoiceURI",voiceSelect.value));
+ autoSpeak.addEventListener("change",()=>localStorage.setItem("flamesAutoSpeak",String(autoSpeak.checked)));
+ settingsToggle.addEventListener("click",()=>settings.classList.toggle("open"));
+ function speak(text){
+  if(!("speechSynthesis" in window))return;
+  window.speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.rate=1.02;utterance.pitch=0.96;utterance.lang="en-US";
+  const chosen=availableVoices.find(v=>v.voiceURI===voiceSelect.value);
+  if(chosen)utterance.voice=chosen;
+  window.speechSynthesis.speak(utterance);
+ }
+ document.getElementById("flamesTestVoice").addEventListener("click",()=>speak("Hey, I'm Flames. This is the voice you've selected for me."));
  function setStatus(text){status.textContent=text;}
  launch.addEventListener("click",()=>{panel.classList.add("open");input.focus();});
  close.addEventListener("click",()=>{panel.classList.remove("open");if(listening&&recognition)recognition.stop();});
@@ -153,7 +188,7 @@
    const data=await response.json();if(!response.ok)throw new Error(data.error||"Flames couldn't respond. Try again.");
    const answer=String(data.reply||"I couldn't form a reply. Try asking again.");
    history.push({role:"assistant",content:answer});addMessage(answer,"bot");setStatus("Ready when you are.");
-   if(voiceInput||window.__flamesVoiceReplies)speak(answer);
+   if(autoSpeak.checked)speak(answer);
   }catch(error){history.pop();addMessage(error.message||"Connection error. Please try again.","bot");setStatus("Could not connect.");}
   finally{send.disabled=false;mic.disabled=false;input.focus();}
  }
